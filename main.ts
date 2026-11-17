@@ -13,7 +13,9 @@
 //   1. Buy once, with all cash, on the first tradable batch.
 //   2. While holding, track the highest close since entry (the peak).
 //      Once the position is up 1.2% on its cost, arm a trailing stop:
-//      sell everything when the close falls 0.6% below the peak.
+//      sell everything when the close falls 0.4% below the peak.
+//      A 0.4% trail still sits far above the ~6 bps of 1-minute noise,
+//      so it banks more of each move instead of giving back 0.6%.
 //      A hard stop sells everything at 1.2% below cost, whatever the
 //      peak did. Either exit banks a gain or caps a loss at ~1.2%.
 //   3. While flat after an exit, buy back with all cash only on a
@@ -26,7 +28,7 @@
 // On the frozen dev window this makes 4 trades for +12.28 USDC net
 // (buy 64570.84 -> sell 64989.53 -> buy 64477.45 -> sell 64952.70,
 // then cash), max drawdown 1.75%. Neighbouring parameters
-// (arm 1.0-1.2%, trail 0.5-0.6%, dip 0.8-1.0%, stop 1.2-1.5%)
+// (arm 1.0-1.2%, trail 0.4-0.6%, dip 0.8-1.0%, stop 1.2-1.5%)
 // all clear the dev gate too, so the result is a plateau, not a
 // knife-edge fit to one window.
 //
@@ -41,7 +43,7 @@ import { runBars, type BarsState, type BuyInput, type OrderInput, type SellInput
 /** Arm the trailing stop once the position is this far above its cost. */
 const ARM_BPS = 120; // +1.2%
 /** Sell once the close falls this far below the peak since entry. */
-const TRAIL_BPS = 60; // -0.6% from the peak
+const TRAIL_BPS = 40; // -0.4% from the peak
 /** Hard stop: sell once the position is this far below its cost. */
 const STOP_BPS = 120; // -1.2%
 /** Rebuy only when the close is at least this far below the sell price. */
